@@ -4,9 +4,9 @@ import numpy as np
 def calculate_volatility(values):
     return values.std()
 
-def calculate_parametric_var(returns, confidence_level):
+def calculate_parametric_var(returns, confidence_level, zero_mean=False):
     alpha = 1 - confidence_level
-    expected_return = returns.mean()
+    expected_return = 0 if zero_mean else returns.mean()
     volatility = calculate_volatility(returns)
     z_score = st.norm.ppf(alpha)
     return expected_return + (volatility * z_score)
