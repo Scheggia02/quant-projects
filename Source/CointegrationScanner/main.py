@@ -1,17 +1,21 @@
 from scanner import *
 from plotter import *
+from asset import Asset
 
 def main():
-    assets = ['AAPL', 'MSFT', 'GOOGL', 'AMZN', 'META']
     start_date = '2023-01-01'
     end_date = '2024-01-01'
+    asset_objects = [Asset(ticker, start_date, end_date) for ticker in ['AAPL', 'MSFT', 'GOOGL', 'AMZN', 'META']]
 
-    # Example: Testing "The Cola Wars"
-    # pair_assets = scan_for_cointegration(assets, start_date, end_date)
-    # for asset1, asset2, p_value in pair_assets:
-    #     print(f"Cointegration P-Value between {asset1} and {asset2}: {p_value:.4f}") 
+    pair_assets = scan_for_cointegration(asset_objects, start_date, end_date)
+    for asset1, asset2, p_value in pair_assets:
 
-    plot_cointegration_heatmap(assets, start_date, end_date)
+        beta = calculate_beta(asset1.prices, asset2.prices)
+        equity_curve, z_score, strategy_returns = backtest_strategy(asset1.prices, asset2.prices, beta)
+        total_return, sharpe_ratio, max_drawdown = calculate_backtest_metrics(equity_curve, strategy_returns)
+        
+        print(f"Cointegrated Pair: {asset1.ticker} & {asset2.ticker} with p-value: {p_value:.4f} | Total Return: {total_return:.2%} | Sharpe Ratio: {sharpe_ratio:.2f} | Max Drawdown: {max_drawdown:.2%}")
+        #plot_strategy_metrics(strategy_returns, equity_curve, total_return, sharpe_ratio, max_drawdown)
 
 if __name__ == "__main__":
     main()
