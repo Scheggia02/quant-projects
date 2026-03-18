@@ -33,6 +33,14 @@ def calculate_vega(S, K, T, r, sigma):
     d1 = calculate_d1_term(S, K, T, r, sigma)
     return S * np.sqrt(T) * stats.norm.pdf(d1)
 
+def calculate_volatility_surface(S, K, base_vol, skew, smile):
+    # Moneyness is the log of the ratio of spot price to strike price, how far is the spot from the strike.
+    moneyness = np.log(S / K)
+    # The volatility surface is modeled as a quadratic function of moneyness, with parameters for the base level, skew, and smile.
+    iv_surface = base_vol + skew * moneyness + smile * (moneyness ** 2)
+    
+    return np.maximum(iv_surface, 0.01)  # Ensure volatility is not negative, set a floor of 1%
+
 def calculate_bs_metrics(S, K, T, r, sigma):
     # S and T are likely 2D arrays from np.meshgrid
     # We use np.maximum(T, 1e-9) to avoid dividing by zero at expiration

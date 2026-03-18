@@ -32,13 +32,15 @@ class DynamicOptionVisualizer:
     def generate_surface_data(self):
         K = self.K
         r = self.r
-        sigma = self.sigma
 
-        # 1. Create the coordinate system
+        # 1. Generate the IV Grid
+        iv_surface = calculate_volatility_surface(self.spot_range, K, self.sigma, skew=-0.15, smile=0.1)
+
+        # 2. Create the coordinate system
         S, T = np.meshgrid(self.spot_range, self.time_range)
 
-        # 2. Run the engine
-        prices, deltas, gammas, vegas, thetas = calculate_bs_metrics(S, K, T, r, sigma)
+        # 3. Run the engine
+        prices, deltas, gammas, vegas, thetas = calculate_bs_metrics(S, K, T, r, iv_surface)
 
-        # 3. Plot the surfaces
+        # 4. Plot the surfaces
         plot_3d_option_surface(S, T, prices, deltas, gammas)
