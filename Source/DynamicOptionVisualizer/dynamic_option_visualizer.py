@@ -1,5 +1,5 @@
 from option_library import *
-from plotter import plot_3d_option_surface
+from plotter import *
 import numpy as np
 
 class DynamicOptionVisualizer:
@@ -42,5 +42,10 @@ class DynamicOptionVisualizer:
         # 3. Run the engine
         prices, deltas, gammas, vegas, thetas = calculate_bs_metrics(S, K, T, r, iv_surface)
 
+
         # 4. Plot the surfaces
-        plot_3d_option_surface(S, T, prices, deltas, gammas)
+
+
+        #create_pnl_simulator(S, T, prices)
+        create_pnl_slider_demo(self.spot_range, K, r, self.sigma)
+        #plot_3d_option_surface(S, T, prices, deltas, gammas)
