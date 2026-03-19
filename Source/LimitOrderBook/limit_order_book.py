@@ -41,3 +41,12 @@ def simulate_limit_order_book(num_ticks=100, num_levels=50):
 
     # Create the DataFrame directly from the list of dicts (much faster than pd.concat)
     return pd.DataFrame(orders), mid_price_history
+
+
+def calculate_order_book_imbalance(lob_df):
+    volume_by_side = lob_df.groupby(['timestamp', 'side'])['quantity'].sum().unstack(fill_value=0)
+    bid_volume = volume_by_side.get('bid', pd.Series(0, index=volume_by_side.index))
+    ask_volume = volume_by_side.get('ask', pd.Series(0, index=volume_by_side.index))
+
+    imbalance = (bid_volume - ask_volume) / (bid_volume + ask_volume)
+    return imbalance
