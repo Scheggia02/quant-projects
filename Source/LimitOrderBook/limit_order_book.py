@@ -16,28 +16,40 @@ class Order:
             'side': [self.side]
         })
 
-def simulate_limit_order_book(num_ticks=100, num_levels=50):
+def simulate_limit_order_book(num_ticks=100, num_levels=50, alpha=0.5):
     mid_price = 100.0
     mid_price_history = []
     orders = []
 
     # Generate bids and asks, simulate higher volume near the mid price
     for t in range(num_ticks):
-        # 1. Move the price ONCE per tick
-        mid_price += np.random.normal(0, 0.1)
-        mid_price_history.append(mid_price) # Append ONCE per tick
+        # 1. Record the mid price for this tick
+        mid_price_history.append(mid_price)
 
-        # 2. Generate Bids AND Asks for this specific moment in time
+        # 2. Generate the LOB for this tick
+        tick_bid_vol = 0
+        tick_ask_vol = 0
+
+        # 3. Generate Bids AND Asks for this specific moment in time
         for level in range(1, num_levels + 1):
             # Bid Logic (Below Mid)
             bid_p = np.round(mid_price - level * 0.05, 2)
             bid_v = np.random.poisson(lam=20 * np.exp(-0.1 * level))
             orders.append({'timestamp': t, 'price': bid_p, 'quantity': bid_v, 'side': 'bid'})
+            tick_bid_vol += bid_v
 
             # Ask Logic (Above Mid)
             ask_p = np.round(mid_price + level * 0.05, 2)
             ask_v = np.random.poisson(lam=20 * np.exp(-0.1 * level))
             orders.append({'timestamp': t, 'price': ask_p, 'quantity': ask_v, 'side': 'ask'})
+            tick_ask_vol += ask_v
+
+        obi = (tick_bid_vol - tick_ask_vol) / (tick_bid_vol + tick_ask_vol)
+
+        # 4. UPDATE THE PRICE for the NEXT tick based on OBI
+        # Price = Old Price + Noise + (alpha * Imbalance)
+        noise = np.random.normal(0, 0.05)
+        mid_price += noise + alpha * obi
 
     # Create the DataFrame directly from the list of dicts (much faster than pd.concat)
     return pd.DataFrame(orders), mid_price_history
