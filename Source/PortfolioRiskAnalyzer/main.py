@@ -1,10 +1,7 @@
-import yfinance as yf
-import numpy as np
 from MathLibrary import math_library as ml
-
 from PortfolioRiskAnalyzer.portfolio_asset import PortfolioAsset
 from PortfolioRiskAnalyzer.portfolio_risk_analyzer import PortfolioRiskAnalyzer
-from .plotter import create_risk_dashboard, plot_var_heatmap, create_optimization_dashboard
+from plotter import *
 
 def print_perc(value):
     print(f"({value:.2%})")
@@ -56,6 +53,9 @@ def run_portfolio_calculations():
     #     portfolio_risk_analyzer.combine_asset_returns()
     # ).show()
 
-    #create_optimization_dashboard(
-    #    portfolio_risk_analyzer.combine_asset_returns()
-    #).show()
+    create_optimization_dashboard(
+       portfolio_risk_analyzer.combine_asset_returns()
+    ).show()
+
+if __name__ == "__main__":
+    run_portfolio_calculations()
