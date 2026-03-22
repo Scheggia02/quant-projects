@@ -49,13 +49,13 @@ def run_portfolio_calculations():
     #     initial_investment=100000
     # ).show()
 
-    # plot_var_heatmap(
-    #     portfolio_risk_analyzer.combine_asset_returns()
-    # ).show()
-
-    create_optimization_dashboard(
-       portfolio_risk_analyzer.combine_asset_returns()
+    plot_var_heatmap(
+        portfolio_risk_analyzer.combine_asset_returns()
     ).show()
+
+    # create_optimization_dashboard(
+    #    portfolio_risk_analyzer.combine_asset_returns()
+    # ).show()
 
 if __name__ == "__main__":
     run_portfolio_calculations()

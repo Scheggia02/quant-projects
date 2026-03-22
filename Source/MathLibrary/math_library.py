@@ -9,7 +9,6 @@ def _as_price_series(prices):
 
     return pd.Series(prices, dtype=float)
 
-
 def _as_numeric_array(values):
     return np.asarray(values, dtype=float)
 

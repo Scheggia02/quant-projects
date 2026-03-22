@@ -47,5 +47,5 @@ class DynamicOptionVisualizer:
 
 
         #create_pnl_simulator(S, T, prices)
-        create_pnl_slider_demo(self.spot_range, K, r, self.sigma)
-        #plot_3d_option_surface(S, T, prices, deltas, gammas)
+        #create_pnl_slider_demo(self.spot_range, K, r, self.sigma)
+        plot_3d_option_surface(S, T, prices, deltas, gammas)

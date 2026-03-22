@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from scanner import *
 
-def plot_cointegration_heatmap(assets, start, end):
+def plot_cointegration_heatmap(assets):
     n = len(assets)
     # Initialize an empty matrix
     pvalue_matrix = np.ones((n, n)) 
@@ -11,18 +11,18 @@ def plot_cointegration_heatmap(assets, start, end):
     for i in range(n):
         for j in range(i + 1, n):
             # Use your existing check_cointegration logic
-            p_value = check_cointegration(assets[i], assets[j], start, end)
+            p_value = check_cointegration(assets[i], assets[j])
             pvalue_matrix[i, j] = p_value
             pvalue_matrix[j, i] = p_value # Symmetry
             
     # Plotting
+    tickers = [asset.ticker for asset in assets]
+
     plt.figure(figsize=(10, 8))
-    sns.heatmap(pvalue_matrix, xticklabels=assets, yticklabels=assets, 
+    sns.heatmap(pvalue_matrix, xticklabels=tickers, yticklabels=tickers, 
                 cmap='RdYlGn_r', annot=True)
     plt.title("Cointegration P-Values (Green = Tradable Pair)")
     plt.show()
-
-    import matplotlib.pyplot as plt
 
 def plot_backtest_results(equity_curve, z_score):
     fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(12, 10), sharex=True)

@@ -6,16 +6,16 @@ import numpy as np
 import pandas as pd
 
 # Check if two assets are cointegrated and return the p-value
-def check_cointegration(asset1, asset2, start_date, end_date):
+def check_cointegration(asset1, asset2):
     score, p_value, _ = coint(asset1.prices, asset2.prices)
     return p_value
 
 # Scan a list of assets for cointegration and return pairs with p-value < 0.05
-def scan_for_cointegration(assets, start_date, end_date, threshold=0.05):
+def scan_for_cointegration(assets, threshold=0.05):
     pairs = []
     for i in range(len(assets)):
         for j in range(i + 1, len(assets)):
-            p_value = check_cointegration(assets[i], assets[j], start_date, end_date)
+            p_value = check_cointegration(assets[i], assets[j])
             if p_value < threshold:  # Threshold for cointegration
                 pairs.append((assets[i], assets[j], p_value))
     return pairs
