@@ -4,7 +4,7 @@ import pandas as pd
 def analyze_strategy(market_data):
     print(f"Analyzing strategy for {market_data.symbol}...")
 
-    data_prices = pd.Series([point.price for point in market_data.market_points], index=pd.to_datetime([point.date for point in market_data.market_points]))
+    data_prices = pd.Series([point.price for point in market_data.market_points], index=pd.to_datetime([point.time for point in market_data.market_points]))
     N = 100
     data_prices = data_prices.head(N)
 

@@ -1,18 +1,28 @@
 #import sys
 from StrategyAnalyzer.market_data import *
-from strategy_analyzer import *
+from StrategyAnalyzer.strategy_analyzer import *
 import json
 
 def read_market_data(file_path):
-    # Json structure: {"symbol": "AAPL", "market_points": [{"date": "2022-01-01", "price": 150.0, "volume": 1000000}, ...]}
-    market_points = []
+    ticks = []
     with open(file_path, 'r') as f:
         data = json.load(f)
         symbol = data["symbolName"]
-        for point in data["marketPoints"]:
-            market_points.append(MarketPoint(point["time"], point["price"], 0.0))
+        timeframe = data["timeframeName"]
+        barDuration = data["barDuration"]
+        for tick in data["ticks"]:
+            time = tick["time"]
+            volume = tick.get("volume", 0.0)
+            bid = tick.get("bid", tick.get("bidPrice"))
+            ask = tick.get("ask", tick.get("askPrice"))
+
+            if bid is not None and ask is not None:
+                ticks.append(MarketTick(time, bid=bid, ask=ask, volume=volume))
+            else:
+                mid_price = MarketTick.calculate_mid(bid, ask)
+                ticks.append(MarketTick(time, bid=mid_price, ask=mid_price, volume=volume))
     
-    return MarketData(symbol, market_points)
+    return MarketData(ticks=ticks, symbolName=symbol, timeframe=timeframe, barDuration=barDuration)
 
 def main():
     print("Running Strategy Analyzer...")
