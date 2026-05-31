@@ -1,5 +1,6 @@
 import pandas as pd
 
+
 class MarketTick:
     def __init__(self, time, bid, ask, volume=0.0):
         self.time = time
@@ -22,6 +23,7 @@ class MarketTick:
 
         return None
 
+
 class OhlcBar:
     def __init__(self, start_time, open, high, low, close, volume=0.0):
         self.start_time = start_time
@@ -30,6 +32,7 @@ class OhlcBar:
         self.low = low
         self.close = close
         self.volume = volume
+
 
 class MarketData:
     def __init__(self, ticks, symbolName, timeframe=None, barDuration=None):
@@ -40,14 +43,18 @@ class MarketData:
 
     def get_start_date(self):
         return self.ticks[0].time
-    
+
     def get_end_date(self):
         return self.ticks[-1].time
 
     def to_bars(self, interval=None, price_field="price"):
-        interval = self.normalize_interval(interval or self.barDuration or self.timeframe)
+        interval = self.normalize_interval(
+            interval or self.barDuration or self.timeframe
+        )
         if interval is None:
-            raise ValueError("An interval is required, for example '1min', '5min', or '1h'.")
+            raise ValueError(
+                "An interval is required, for example '1min', '5min', or '1h'."
+            )
 
         if len(self.ticks) == 0:
             return []
@@ -58,11 +65,13 @@ class MarketData:
             if price is None:
                 continue
 
-            records.append({
-                "time": tick.time,
-                "price": price,
-                "volume": tick.volume or 0.0,
-            })
+            records.append(
+                {
+                    "time": tick.time,
+                    "price": price,
+                    "volume": tick.volume or 0.0,
+                }
+            )
 
         if len(records) == 0:
             return []
@@ -76,16 +85,35 @@ class MarketData:
 
         bars = []
         for start_time, row in ohlc.dropna().iterrows():
-            bars.append(OhlcBar(
-                start_time=start_time,
-                open=row["open"],
-                high=row["high"],
-                low=row["low"],
-                close=row["close"],
-                volume=volume.loc[start_time],
-            ))
+            bars.append(
+                OhlcBar(
+                    start_time=start_time,
+                    open=row["open"],
+                    high=row["high"],
+                    low=row["low"],
+                    close=row["close"],
+                    volume=volume.loc[start_time],
+                )
+            )
 
         return bars
+
+    @staticmethod
+    def to_ohlc_frame(bars):
+        frame = pd.DataFrame(
+            [
+                {
+                    "Date": pd.to_datetime(bar.start_time),
+                    "Open": bar.open,
+                    "High": bar.high,
+                    "Low": bar.low,
+                    "Close": bar.close,
+                    "Volume": bar.volume,
+                }
+                for bar in bars
+            ]
+        )
+        return frame.set_index("Date")
 
     @staticmethod
     def normalize_interval(interval):
